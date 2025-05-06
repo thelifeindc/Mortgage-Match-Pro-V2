@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Match Pro - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Admin-specific styles */
+        .admin-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .config-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .config-section h3 {
+            margin-top: 0;
+            color: #2c5282;
+            font-size: 1.4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .btn-primary {
+            background-color: #2c5282;
+            border-color: #2c5282;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a365d;
+            border-color: #1a365d;
+        }
+        
+        .alert {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .debug-output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-family: monospace;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Mortgage Match Pro - Admin Panel</h1>
+        <p>Configure your form submission settings below.</p>
+        
+        <div class="config-section">
+            <h3>Google Sheets Integration</h3>
+            <p>Set up your form to submit entries to a Google Sheet.</p>
+            
+            <div class="form-group">
+                <label for="google-sheets-url">Google Apps Script Web App URL</label>
+                <input type="text" id="google-sheets-url" class="form-control" placeholder="https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec">
+                <small class="text-muted">Enter the URL of your deployed Google Apps Script web app.</small>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" id="google-sheets-enabled" class="form-check-input">
+                    <label for="google-sheets-enabled" class="form-check-label">Enable Google Sheets submission</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" id="google-sheets-debug" class="form-check-input">
+                    <label for="google-sheets-debug" class="form-check-label">Enable debug logging</label>
+                    <small class="d-block text-muted">Logs submission data and responses to the browser console.</small>
+                </div>
+            </div>
+            
+            <button id="save-config" class="btn btn-primary">Save Configuration</button>
+            <button id="test-connection" class="btn btn-outline-secondary ms-2">Test Connection</button>
+            
+            <div id="config-alert" class="alert" role="alert"></div>
+            <div id="test-output" class="debug-output"></div>
+        </div>
+        
+        <div class="config-section">
+            <h3>Instructions</h3>
+            <ol>
+                <li>Create a Google Sheet to store form submissions</li>
+                <li>Create a Google Apps Script web app by going to Extensions > Apps Script in your Google Sheet</li>
+                <li>Copy and paste the Apps Script code from the instructions document</li>
+                <li>Deploy the script as a web app and copy the Web App URL</li>
+                <li>Paste the URL above and click "Save Configuration"</li>
+                <li>Click "Test Connection" to verify your setup</li>
+            </ol>
+            <p><a href="google-sheet-instructions.md" target="_blank">View complete setup instructions</a></p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load existing configuration
+            loadConfig();
+            
+            // Save configuration button click handler
+            document.getElementById('save-config').addEventListener('click', saveConfig);
+            
+            // Test connection button click handler
+            document.getElementById('test-connection').addEventListener('click', testConnection);
+        });
+        
+        // Load configuration from localStorage
+        function loadConfig() {
+            try {
+                const config = JSON.parse(localStorage.getItem('googleSheetConfig')) || {
+                    url: '',
+                    enabled: false,
+                    debug: false
+                };
+                
+                document.getElementById('google-sheets-url').value = config.url || '';
+                document.getElementById('google-sheets-enabled').checked = config.enabled || false;
+                document.getElementById('google-sheets-debug').checked = config.debug || false;
+            } catch (error) {
+                showAlert('Error loading configuration: ' + error.message, 'danger');
+            }
+        }
+        
+        // Save configuration to localStorage
+        function saveConfig() {
+            try {
+                const url = document.getElementById('google-sheets-url').value.trim();
+                const enabled = document.getElementById('google-sheets-enabled').checked;
+                const debug = document.getElementById('google-sheets-debug').checked;
+                
+                // Basic URL validation
+                if (enabled && !url) {
+                    showAlert('Please enter a Google Apps Script Web App URL', 'warning');
+                    return;
+                }
+                
+                if (enabled && !url.startsWith('https://script.google.com/macros/s/')) {
+                    showAlert('URL does not appear to be a valid Google Apps Script web app URL', 'warning');
+                    return;
+                }
+                
+                // Save to localStorage
+                const config = {
+                    url,
+                    enabled,
+                    debug
+                };
+                
+                localStorage.setItem('googleSheetConfig', JSON.stringify(config));
+                showAlert('Configuration saved successfully!', 'success');
+                
+                // Update configuration in the main window
+                updateMainWindowConfig(config);
+            } catch (error) {
+                showAlert('Error saving configuration: ' + error.message, 'danger');
+            }
+        }
+        
+        // Update configuration in the main window
+        function updateMainWindowConfig(config) {
+            // Create a temporary hidden iframe to load the main page
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // When the iframe loads, update the configuration
+            iframe.onload = function() {
+                try {
+                    // Try to access the googleSheetConfig object in the iframe
+                    const iframeWindow = iframe.contentWindow;
+                    if (iframeWindow && iframeWindow.googleSheetConfig) {
+                        iframeWindow.googleSheetConfig = config;
+                        console.log('Configuration updated in main window');
+                    }
+                    
+                    // Remove the iframe
+                    document.body.removeChild(iframe);
+                } catch (error) {
+                    console.error('Error updating main window config:', error);
+                    // Remove the iframe
+                    document.body.removeChild(iframe);
+                }
+            };
+            
+            // Load the main page in the iframe
+            iframe.src = 'index.html';
+        }
+        
+        // Test connection to Google Sheets
+        function testConnection() {
+            const url = document.getElementById('google-sheets-url').value.trim();
+            const testOutput = document.getElementById('test-output');
+            
+            if (!url) {
+                showAlert('Please enter a Google Apps Script Web App URL', 'warning');
+                return;
+            }
+            
+            testOutput.style.display = 'block';
+            testOutput.textContent = 'Testing connection...';
+            
+            // Create test data
+            const testData = {
+                firstName: 'Test',
+                lastName: 'User',
+                email: 'test@example.com',
+                phoneNumber: '123-456-7890',
+                liveInCounty: true,
+                workInCounty: false,
+                countyEmployee: false,
+                municipality: 'any',
+                householdSize: 2,
+                householdIncome: 75000,
+                firstTimeBuyer: true,
+                currentlyOwnProperty: false,
+                creditScore: '700-plus',
+                studentDebt: false,
+                howLongStay: '5-10',
+                selectedPrograms: ['Test Program 1', 'Test Program 2'],
+                qualifiedPrograms: ['Test Program 1'],
+                additionalResponses: {
+                    test: {
+                        question: 'Test Question',
+                        answer: 'Test Answer'
+                    }
+                },
+                isTest: true // Flag to indicate this is a test submission
+            };
+            
+            // Send test request
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => {
+                testOutput.textContent += '\nResponse status: ' + response.status;
+                return response.text();
+            })
+            .then(data => {
+                let responseData;
+                try {
+                    responseData = JSON.parse(data);
+                    testOutput.textContent += '\nResponse: ' + JSON.stringify(responseData, null, 2);
+                    
+                    if (responseData.result === 'success') {
+                        showAlert('Connection test successful! Your Google Sheet is properly configured.', 'success');
+                    } else {
+                        showAlert('Connection test completed, but received an error response from the server. Check the details below.', 'warning');
+                    }
+                } catch (e) {
+                    testOutput.textContent += '\nRaw response (not JSON): ' + data;
+                    showAlert('Connection test completed, but the response was not valid JSON. This could indicate an issue with your Google Apps Script.', 'warning');
+                }
+            })
+            .catch(error => {
+                testOutput.textContent += '\nError: ' + error.message;
+                showAlert('Connection test failed. Check the console for more details.', 'danger');
+            });
+        }
+        
+        // Show alert message
+        function showAlert(message, type) {
+            const alert = document.getElementById('config-alert');
+            alert.className = 'alert alert-' + (type || 'info');
+            alert.style.display = 'block';
+            alert.textContent = message;
+            
+            // Hide alert after 5 seconds
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

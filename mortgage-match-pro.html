@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Match Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .program-card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .program-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 15px 20px;
+        }
+        .program-content {
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .summary-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        #results-container {
+            margin-top: 30px;
+        }
+        .loading-spinner {
+            text-align: center;
+            padding: 30px;
+        }
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+        }
+        .list-group-item:first-child {
+            border-top: none;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Mortgage Match Pro</h1>
+        <p class="lead">
+            Find homebuyer programs across Maryland that you may qualify for.
+        </p>
+
+        <form id="qualification-form">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="county">Which Maryland county are you interested in?</label>
+                        <select id="county" name="county" class="form-control">
+                            <option value="any">Any county in Maryland</option>
+                            <option value="allegany">Allegany County</option>
+                            <option value="anne-arundel">Anne Arundel County</option>
+                            <option value="baltimore-county">Baltimore County</option>
+                            <option value="baltimore-city">Baltimore City</option>
+                            <option value="calvert">Calvert County</option>
+                            <option value="caroline">Caroline County</option>
+                            <option value="carroll">Carroll County</option>
+                            <option value="cecil">Cecil County</option>
+                            <option value="charles">Charles County</option>
+                            <option value="dorchester">Dorchester County</option>
+                            <option value="frederick">Frederick County</option>
+                            <option value="garrett">Garrett County</option>
+                            <option value="harford">Harford County</option>
+                            <option value="howard">Howard County</option>
+                            <option value="kent">Kent County</option>
+                            <option value="montgomery">Montgomery County</option>
+                            <option value="prince-georges">Prince George's County</option>
+                            <option value="queen-annes">Queen Anne's County</option>
+                            <option value="somerset">Somerset County</option>
+                            <option value="st-marys">St. Mary's County</option>
+                            <option value="talbot">Talbot County</option>
+                            <option value="washington">Washington County</option>
+                            <option value="wicomico">Wicomico County</option>
+                            <option value="worcester">Worcester County</option>
+                        </select>
+                    </div>
+                    
+                    <div id="city-container"></div>
+                    
+                    <div class="form-group">
+                        <label for="first-time-buyer">Are you a first-time homebuyer?</label>
+                        <select id="first-time-buyer" name="first-time-buyer" class="form-control">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="credit-score">What is your credit score?</label>
+                        <select id="credit-score" name="credit-score" class="form-control">
+                            <option value="below-620">Below 620</option>
+                            <option value="620-639">620 - 639</option>
+                            <option value="640-659">640 - 659</option>
+                            <option value="660-679">660 - 679</option>
+                            <option value="680-699">680 - 699</option>
+                            <option value="700-719">700 - 719</option>
+                            <option value="720-739">720 - 739</option>
+                            <option value="740-plus">740 or higher</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="household-size">How many people are in your household (including yourself)?</label>
+                        <select id="household-size" name="household-size" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8-plus">8 or more</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="income">What is your annual household income?</label>
+                        <select id="income" name="income" class="form-control">
+                            <option value="below-30k">Below $30,000</option>
+                            <option value="30k-50k">$30,000 - $50,000</option>
+                            <option value="50k-75k">$50,000 - $75,000</option>
+                            <option value="75k-100k">$75,000 - $100,000</option>
+                            <option value="100k-125k">$100,000 - $125,000</option>
+                            <option value="125k-150k">$125,000 - $150,000</option>
+                            <option value="150k-200k">$150,000 - $200,000</option>
+                            <option value="above-200k">Above $200,000</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Do you currently live in the county where you want to buy a home?</label>
+                        <select id="living-in-county" name="living-in-county" class="form-control">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Do you currently work in the county where you want to buy a home?</label>
+                        <select id="working-in-county" name="working-in-county" class="form-control">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Are you employed by a county government?</label>
+                        <select id="county-employee" name="county-employee" class="form-control">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Do you have student loan debt?</label>
+                        <select id="student-debt" name="student-debt" class="form-control">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Do you currently own any property?</label>
+                        <select id="currently-own-property" name="currently-own-property" class="form-control">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg">Find Programs</button>
+        </form>
+        
+        <div id="results-section" class="hidden mt-5">
+            <h2>Your Matching Programs</h2>
+            
+            <div class="summary-card">
+                <h3>Your Information</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Location:</strong> <span id="summary-location"></span></p>
+                        <p><strong>First-time Homebuyer:</strong> <span id="summary-first-time"></span></p>
+                        <p><strong>Credit Score Range:</strong> <span id="summary-credit"></span></p>
+                        <p><strong>Income Range:</strong> <span id="summary-income"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Household Size:</strong> <span id="summary-household"></span></p>
+                        <p><strong>Lives in County:</strong> <span id="summary-lives"></span></p>
+                        <p><strong>Works in County:</strong> <span id="summary-works"></span></p>
+                        <p><strong>County Employee:</strong> <span id="summary-employee"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="results-container">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Finding programs that match your situation...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Program data
+        const programs = [
+            {
+                id: 'maryland-mortgage-program',
+                name: 'Maryland Mortgage Program (MMP)',
+                description: 'Statewide homebuying assistance program offering low interest rates and downpayment assistance.',
+                savings: 'Down payment assistance up to $5,000 or 3% of the purchase price as a zero-interest deferred loan.',
+                eligibility: {
+                    firstTimeBuyer: true,
+                    creditScore: 640,
+                    livingInCounty: false,
+                    workingInCounty: false,
+                    countyEmployee: false,
+                    currentlyOwnProperty: false,
+                    counties: ['any'],
+                    incomeLimits: {
+                        1: 145000,
+                        2: 145000,
+                        3: 145000,
+                        4: 145000,
+                        5: 145000
+                    }
+                },
+                benefits: [
+                    'Competitive interest rates',
+                    'Down payment and closing cost assistance',
+                    'Tax credit available (Maryland HomeCredit)',
+                    'Potential student debt relief'
+                ],
+                requirements: [
+                    'Must be a first-time homebuyer (or not owned in the past 3 years)',
+                    'Credit score of 640 or higher',
+                    'Must occupy the home as primary residence',
+                    'Must meet income and purchase price limits',
+                    'Must complete homebuyer education'
+                ]
+            },
+            {
+                id: 'montgomery-hoc',
+                name: 'Montgomery County HOC Mortgage Purchase Program',
+                description: 'Provides below-market interest rate loans for low and moderate income first-time homebuyers in Montgomery County.',
+                savings: 'Below-market interest rates with down payment assistance up to $10,000.',
+                eligibility: {
+                    firstTimeBuyer: true,
+                    creditScore: 640,
+                    livingInCounty: false,
+                    workingInCounty: false,
+                    countyEmployee: false,
+                    currentlyOwnProperty: false,
+                    counties: ['montgomery'],
+                    incomeLimits: {
+                        1: 109500,
+                        2: 125000,
+                        3: 140500,
+                        4: 156000,
+                        5: 168500
+                    }
+                },
+                benefits: [
+                    'Below-market interest rates',
+                    'Down payment assistance up to $10,000',
+                    'Reduced mortgage insurance premiums',
+                    'Can be combined with other assistance programs'
+                ],
+                requirements: [
+                    'Must be a first-time homebuyer',
+                    'Credit score of 640 or higher',
+                    'Must complete HUD-approved homebuyer education course',
+                    'Must occupy the home as primary residence',
+                    'Property must be in Montgomery County'
+                ]
+            },
+            {
+                id: 'pg-pathway-to-purchase',
+                name: "Prince George's County Pathway to Purchase",
+                description: "Down payment and closing cost assistance for first-time homebuyers purchasing in Prince George's County.",
+                savings: 'Up to $10,000 in down payment assistance as a 0% interest deferred loan.',
+                eligibility: {
+                    firstTimeBuyer: true,
+                    creditScore: 640,
+                    livingInCounty: false,
+                    workingInCounty: false,
+                    countyEmployee: false,
+                    currentlyOwnProperty: false,
+                    counties: ['prince-georges'],
+                    incomeLimits: {
+                        1: 71400,
+                        2: 81600,
+                        3: 91800,
+                        4: 102000,
+                        5: 110160
+                    }
+                },
+                benefits: [
+                    'Zero-interest deferred loan of up to $10,000',
+                    'Loan forgiven after 5 years of primary residence',
+                    'Can be combined with other programs',
+                    'No monthly payment required'
+                ],
+                requirements: [
+                    'Must be a first-time homebuyer',
+                    'Credit score of 640 or higher',
+                    'Maximum 45% debt-to-income ratio',
+                    'Must complete HUD-approved homebuyer education course',
+                    'Must occupy the home as primary residence',
+                    'Property must be in Prince George\'s County'
+                ]
+            }
+        ];
+
+        // Function to update city options based on selected county
+        function updateCityOptions() {
+            const countySelect = document.getElementById('county');
+            const cityContainer = document.getElementById('city-container');
+            const selectedCounty = countySelect.value;
+            
+            // Clear current city options
+            cityContainer.innerHTML = '';
+            
+            // Only show city selection if a specific county is selected
+            if (selectedCounty !== 'any') {
+                // Create city selection form group
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.setAttribute('for', 'city');
+                label.textContent = 'Which city/town are you interested in?';
+                
+                const select = document.createElement('select');
+                select.id = 'city';
+                select.name = 'city';
+                select.className = 'form-control';
+                
+                // Add the default "Any" option
+                const anyOption = document.createElement('option');
+                anyOption.value = 'any';
+                anyOption.textContent = `Any city/town in ${selectedCounty.replace('-', ' ')} County`;
+                select.appendChild(anyOption);
+                
+                // Add city options based on selected county
+                const cityOptions = getCitiesForCounty(selectedCounty);
+                cityOptions.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = city;
+                    select.appendChild(option);
+                });
+                
+                formGroup.appendChild(label);
+                formGroup.appendChild(select);
+                cityContainer.appendChild(formGroup);
+            }
+        }
+
+        // Function to get cities for a given county
+        function getCitiesForCounty(county) {
+            const cityMap = {
+                'montgomery': ['Gaithersburg', 'Rockville', 'Silver Spring', 'Bethesda', 'Germantown', 'Takoma Park'],
+                'prince-georges': ['Bowie', 'College Park', 'Greenbelt', 'Hyattsville', 'Laurel'],
+                'baltimore-county': ['Towson', 'Catonsville', 'Dundalk', 'Essex', 'Pikesville'],
+                'baltimore-city': ['Baltimore'],
+                'howard': ['Columbia', 'Ellicott City', 'Laurel', 'Elkridge'],
+                'anne-arundel': ['Annapolis', 'Glen Burnie', 'Severna Park', 'Crofton'],
+                'frederick': ['Frederick', 'Brunswick', 'Thurmont'],
+                // Add more counties and their cities as needed
+            };
+            
+            return cityMap[county] || [];
+        }
+
+        // Helper function to convert credit score range to numeric value
+        function getCreditScoreValue(creditScoreRange) {
+            const rangeMap = {
+                'below-620': 619,
+                '620-639': 620,
+                '640-659': 640,
+                '660-679': 660,
+                '680-699': 680,
+                '700-719': 700,
+                '720-739': 720,
+                '740-plus': 740
+            };
+            
+            return rangeMap[creditScoreRange] || 0;
+        }
+
+        // Helper function to convert income range to numeric value
+        function getIncomeValue(incomeRange) {
+            const rangeMap = {
+                'below-30k': 29999,
+                '30k-50k': 50000,
+                '50k-75k': 75000,
+                '75k-100k': 100000,
+                '100k-125k': 125000,
+                '125k-150k': 150000,
+                '150k-200k': 200000,
+                'above-200k': 200001
+            };
+            
+            return rangeMap[incomeRange] || 0;
+        }
+
+        // Function to filter qualifying programs based on user data
+        function filterQualifyingPrograms(userData) {
+            return programs.filter(program => {
+                // Check credit score requirement
+                const creditScoreQualifies = getCreditScoreValue(userData.creditScore) >= program.eligibility.creditScore;
+                
+                // Check first-time buyer requirement
+                const firstTimeBuyerQualifies = !program.eligibility.firstTimeBuyer || userData.firstTimeBuyer === 'yes';
+                
+                // Check county employee requirement
+                const countyEmployeeQualifies = !program.eligibility.countyEmployee || userData.countyEmployee === 'yes';
+                
+                // Check property ownership requirement
+                const propertyOwnershipQualifies = !program.eligibility.currentlyOwnProperty || userData.currentlyOwnProperty === 'yes';
+                
+                // Check student debt requirement
+                const studentDebtQualifies = true; // Include this if programs have student debt requirements
+                
+                // Check location requirements (living/working in county)
+                const livingInCountyQualifies = !program.eligibility.livingInCounty || userData.livingInCounty === 'yes';
+                const workingInCountyQualifies = !program.eligibility.workingInCounty || userData.workingInCounty === 'yes';
+                const locationQualifies = livingInCountyQualifies && workingInCountyQualifies;
+                
+                // Check income limits
+                const householdSize = parseInt(userData.householdSize) || 1;
+                const actualHouseholdSize = householdSize > 5 ? 5 : householdSize;
+                const incomeLimit = program.eligibility.incomeLimits[actualHouseholdSize] || 0;
+                const incomeQualifies = getIncomeValue(userData.income) <= incomeLimit;
+                
+                // Check county eligibility
+                let countyQualifies = true;
+                if (program.eligibility.counties && program.eligibility.counties.length > 0) {
+                    countyQualifies = userData.county === 'any' || 
+                                     program.eligibility.counties.includes('any') || 
+                                     program.eligibility.counties.includes(userData.county);
+                }
+                
+                // Check city eligibility
+                let cityQualifies = true;
+                if (program.eligibility.cities && program.eligibility.cities.length > 0) {
+                    cityQualifies = userData.city === 'any' || program.eligibility.cities.includes(userData.city);
+                }
+                
+                // Return true if all criteria qualify
+                return creditScoreQualifies && 
+                      firstTimeBuyerQualifies && 
+                      countyEmployeeQualifies && 
+                      propertyOwnershipQualifies &&
+                      studentDebtQualifies &&
+                      locationQualifies && 
+                      incomeQualifies &&
+                      countyQualifies &&
+                      cityQualifies;
+            });
+        }
+
+        // Function to render program cards
+        function renderProgramCards(programs) {
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '';
+            
+            if (programs.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-info">
+                        <h4>No matching programs found</h4>
+                        <p>Based on your information, we couldn't find any matching home loan assistance programs. You might consider:</p>
+                        <ul>
+                            <li>Checking other counties or cities</li>
+                            <li>Reviewing your credit score requirements</li>
+                            <li>Exploring private lender options</li>
+                        </ul>
+                    </div>
+                `;
+                return;
+            }
+            
+            programs.forEach(program => {
+                const programCard = document.createElement('div');
+                programCard.className = 'card program-card';
+                programCard.innerHTML = `
+                    <div class="program-header">
+                        <h3 class="mb-0">${program.name}</h3>
+                    </div>
+                    <div class="program-content">
+                        <p class="lead">${program.description}</p>
+                        <div class="alert alert-success">
+                            <strong>Financial Benefit:</strong> ${program.savings}
+                        </div>
+                        
+                        <h4>Benefits</h4>
+                        <ul class="list-group mb-4">
+                            ${program.benefits.map(benefit => `<li class="list-group-item">${benefit}</li>`).join('')}
+                        </ul>
+                        
+                        <h4>Requirements</h4>
+                        <ul class="list-group mb-4">
+                            ${program.requirements.map(req => `<li class="list-group-item">${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                
+                resultsContainer.appendChild(programCard);
+            });
+        }
+
+        // Function to populate the summary section
+        function populateSummary(userData) {
+            document.getElementById('summary-location').textContent = 
+                userData.county === 'any' ? 'Any County in Maryland' : 
+                    userData.county.charAt(0).toUpperCase() + userData.county.slice(1).replace('-', ' ') + ' County' + 
+                    (userData.city && userData.city !== 'any' ? ', ' + userData.city.charAt(0).toUpperCase() + userData.city.slice(1).replace('-', ' ') : '');
+            
+            document.getElementById('summary-first-time').textContent = userData.firstTimeBuyer === 'yes' ? 'Yes' : 'No';
+            document.getElementById('summary-credit').textContent = userData.creditScore.replace('-', ' to ').replace('below-620', 'Below 620').replace('740-plus', '740 or higher');
+            document.getElementById('summary-income').textContent = userData.income.replace('-', ' to $').replace('k', ',000').replace('below-30k', 'Below $30,000').replace('above-200k', 'Above $200,000');
+            document.getElementById('summary-household').textContent = userData.householdSize === '8-plus' ? '8 or more' : userData.householdSize;
+            document.getElementById('summary-lives').textContent = userData.livingInCounty === 'yes' ? 'Yes' : 'No';
+            document.getElementById('summary-works').textContent = userData.workingInCounty === 'yes' ? 'Yes' : 'No';
+            document.getElementById('summary-employee').textContent = userData.countyEmployee === 'yes' ? 'Yes' : 'No';
+        }
+
+        // Form submission handler
+        document.getElementById('qualification-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect user data
+            const userData = {
+                county: document.getElementById('county').value,
+                city: document.getElementById('city') ? document.getElementById('city').value : 'any',
+                firstTimeBuyer: document.getElementById('first-time-buyer').value,
+                creditScore: document.getElementById('credit-score').value,
+                householdSize: document.getElementById('household-size').value,
+                income: document.getElementById('income').value,
+                livingInCounty: document.getElementById('living-in-county').value,
+                workingInCounty: document.getElementById('working-in-county').value,
+                countyEmployee: document.getElementById('county-employee').value,
+                studentDebt: document.getElementById('student-debt').value,
+                currentlyOwnProperty: document.getElementById('currently-own-property').value
+            };
+            
+            // Populate summary
+            populateSummary(userData);
+            
+            // Show results section
+            document.getElementById('results-section').classList.remove('hidden');
+            
+            // Simulate loading (remove in production)
+            setTimeout(() => {
+                // Filter and display qualifying programs
+                const qualifyingPrograms = filterQualifyingPrograms(userData);
+                renderProgramCards(qualifyingPrograms);
+            }, 1000);
+            
+            // Scroll to results
+            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Add event listener to county dropdown
+        document.getElementById('county').addEventListener('change', updateCityOptions);
+        
+        // Initialize city options based on default county selection
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize city options
+            updateCityOptions();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mortgage Match Pro | Find Your Perfect Home Loan Program</title>
+    <meta name="description" content="Find the perfect mortgage and homebuyer assistance programs across Maryland with Mortgage Match Pro.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Mortgage Match Pro Logo" class="logo" onerror="this.style.display='none'">
+                <h1>Mortgage Match Pro</h1>
+            </div>
+            <p class="tagline">Finding the right homebuyer program for you in Maryland</p>
+        </div>
+    </header>
+
+    <div class="container main-container">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar" style="width: 25%"></div>
+            </div>
+            <div class="progress-steps">
+                <span class="progress-step active">Basic Info</span>
+                <span class="progress-step">Available Programs</span>
+                <span class="progress-step">Program Details</span>
+                <span class="progress-step">Results</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Basic Questions -->
+        <div class="step active" id="step1">
+            <h2>Step 1: Tell Us About Yourself</h2>
+            <p class="lead">
+                Let's start with some basic information to help find homebuyer
+                programs across Maryland that you may qualify for.
+            </p>
+
+            <!-- Updated Name Fields - Side by Side -->
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input
+                            type="text"
+                            id="first-name"
+                            name="first-name"
+                            placeholder="Enter your first name" />
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input
+                            type="text"
+                            id="last-name"
+                            name="last-name"
+                            placeholder="Enter your last name" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Updated Contact Fields - Side by Side -->
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email address" />
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="phone-number">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone-number"
+                            name="phone-number"
+                            placeholder="Enter your phone number" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="live-in-county">Do you currently live in Maryland?</label>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="live-yes"
+                        name="live-in-county"
+                        value="yes" />
+                    <label for="live-yes" style="display: inline">Yes</label>
+                </div>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="live-no"
+                        name="live-in-county"
+                        value="no" />
+                    <label for="live-no" style="display: inline">No</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="work-in-county">Do you currently work in Maryland?</label>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="work-yes"
+                        name="work-in-county"
+                        value="yes" />
+                    <label for="work-yes" style="display: inline">Yes</label>
+                </div>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="work-no"
+                        name="work-in-county"
+                        value="no" />
+                    <label for="work-no" style="display: inline">No</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="county-employee">Are you a Maryland county or state employee?</label>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="employee-yes"
+                        name="county-employee"
+                        value="yes" />
+                    <label for="employee-yes" style="display: inline">Yes</label>
+                </div>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="employee-no"
+                        name="county-employee"
+                        value="no" />
+                    <label for="employee-no" style="display: inline">No</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="municipality">Which area of Maryland are you interested in?</label>
+                <select id="municipality" name="municipality">
+                    <option value="any">Any area in Maryland</option>
+                    <!-- County options will be loaded from main.js -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="household-size">How many people are in your household?</label>
+                <select id="household-size" name="household-size">
+                    <option value="1">1 person</option>
+                    <option value="2">2 people</option>
+                    <option value="3">3 people</option>
+                    <option value="4">4 people</option>
+                    <option value="5">5 or more people</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="household-income">What is your annual household income?</label>
+                <input
+                    type="number"
+                    id="household-income"
+                    name="household-income"
+                    placeholder="Enter amount in dollars" />
+            </div>
+
+            <div class="form-group">
+                <label for="first-time-buyer">Are you a first-time homebuyer (haven't owned a home in the past 3 years)?</label>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="first-time-yes"
+                        name="first-time-buyer"
+                        value="yes" />
+                    <label for="first-time-yes" style="display: inline">Yes</label>
+                </div>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="first-time-no"
+                        name="first-time-buyer"
+                        value="no" />
+                    <label for="first-time-no" style="display: inline">No</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="own-property">Do you currently own any real estate?</label>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="own-yes"
+                        name="own-property"
+                        value="yes" />
+                    <label for="own-yes" style="display: inline">Yes</label>
+                </div>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="own-no"
+                        name="own-property"
+                        value="no" />
+                    <label for="own-no" style="display: inline">No</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="credit-score">What is your approximate credit score?</label>
+                <select id="credit-score" name="credit-score">
+                    <option value="below-640">Below 640</option>
+                    <option value="640-699">640-699</option>
+                    <option value="700-plus">700 or above</option>
+                    <option value="unknown">I don't know</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="student-debt">Do you have outstanding student loan debt?</label>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="student-debt-yes"
+                        name="student-debt"
+                        value="yes" />
+                    <label for="student-debt-yes" style="display: inline">Yes</label>
+                </div>
+                <div class="radio-option">
+                    <input
+                        type="radio"
+                        id="student-debt-no"
+                        name="student-debt"
+                        value="no" />
+                    <label for="student-debt-no" style="display: inline">No</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="how-long-stay">How long do you plan to stay in the home you purchase?</label>
+                <select id="how-long-stay" name="how-long-stay">
+                    <option value="less-than-5">Less than 5 years</option>
+                    <option value="5-10">5-10 years</option>
+                    <option value="10-15">10-15 years</option>
+                    <option value="15-plus">15+ years</option>
+                    <option value="unsure">Not sure</option>
+                </select>
+            </div>
+
+            <div class="button-container">
+                <button type="button" id="next-to-step2" class="primary-button">
+                    Find My Programs
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Programs List -->
+        <div class="step" id="step2">
+            <h2>Step 2: Programs You May Qualify For</h2>
+            <p class="lead">
+                Based on your answers, here are the homebuyer programs you may
+                qualify for in Maryland. Select all programs you're
+                interested in learning more about:
+            </p>
+
+            <div id="programs-list">
+                <!-- Program cards will be generated here via JavaScript -->
+            </div>
+
+            <div class="button-container">
+                <button type="button" class="back-btn" id="back-to-step1">
+                    Back
+                </button>
+                <button type="button" id="next-to-step3" disabled>
+                    Continue to Additional Questions
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Program Specific Questions -->
+        <div class="step" id="step3">
+            <h2>Step 3: Program Details & Additional Questions</h2>
+            
+            <div id="selected-programs-details">
+                <!-- Selected program details will be displayed here -->
+            </div>
+            
+            <div id="program-specific-questions">
+                <!-- Program-specific questions will be displayed here -->
+            </div>
+            
+            <div class="button-container">
+                <button type="button" class="back-btn" id="back-to-step2">
+                    Back to Programs
+                </button>
+                <button type="button" id="check-qualification">
+                    Check If I Qualify
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Summary Page -->
+        <div class="step" id="step4">
+            <h2>Your Qualification Summary</h2>
+            <p class="lead">
+                Based on the information you provided, here is your qualification
+                summary:
+            </p>
+
+            <div id="user-info-summary" class="summary-section">
+                <h3>Your Information</h3>
+                <!-- User information summary will be displayed here -->
+            </div>
+
+            <div id="qualification-results" class="summary-section">
+                <h3>Program Qualification Results</h3>
+                <!-- Qualification results will be displayed here -->
+            </div>
+
+            <div id="next-steps" class="summary-section">
+                <h3>Next Steps</h3>
+                <p>
+                    To proceed with any qualifying programs, please contact the
+                    appropriate agency or visit their website for official
+                    application procedures.
+                </p>
+            </div>
+
+            <div class="button-container">
+                <button type="button" class="back-btn" id="back-to-step3">
+                    Back to Questions
+                </button>
+                <button type="button" id="start-over">Start Over</button>
+                <button type="button" id="print-summary" class="print-btn">
+                    Print Summary
+                </button>
+                <!-- Submit Button -->
+                <button
+                    type="button"
+                    id="submit-data"
+                    class="submit-btn">
+                    Submit Information
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Mortgage Match Pro</h3>
+                    <p>Finding the right homebuyer program for you in Maryland</p>
+                </div>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-disclaimer">
+                <p>© 2025 Mortgage Match Pro. All rights reserved.</p>
+                <p class="small">This tool provides a preliminary assessment only. Final qualification determination will be made by program administrators.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load JavaScript modules -->
+    <script type="module" src="js/programs.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/form-handlers.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
