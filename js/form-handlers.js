@@ -117,9 +117,15 @@ function moveToStep4() {
     // Generate summary
     generateSummary();
 
+    // Submit data to Google Sheet automatically
+    submitToGoogleSheet();
+
     step3.classList.remove("active");
     step4.classList.add("active");
     progressBar.style.width = "100%";
+    
+    // Disable the submit button since we've already submitted
+    document.getElementById("submit-data").disabled = true;
 }
 
 // Helper Functions
@@ -532,11 +538,11 @@ function getStayDurationDisplayValue(stayDurationCode) {
 // Configuration for Google Sheet submission
 let googleSheetConfig = {
     // Replace this with your Google Apps Script Web App URL
-    url: "https://script.google.com/macros/s/AKfycbzSSiuBIxr6Ws3qSyapTHQoxoLk4zZnqsLi1y_T168iLbFo4kpWfcGr5I8hE8Xuvfw5Zw/exec",
+    url: "https://script.google.com/macros/s/AKfycbzIEN7ppnX9wue9YFnDPDl78Mou98tn4YvhfJonEirfTMv5Yj3WjkAhSem-1jH1RlGduA/exec",
     // Set to true to enable Google Sheets submission, false to disable
     enabled: true,
     // Show debug information in the console
-    debug: false
+    debug: true
 };
 
 // Try to load configuration from localStorage if available
@@ -636,9 +642,10 @@ function submitToGoogleSheet() {
     fetch(
         googleSheetConfig.url,
         {
+            redirect: "follow",
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "text/plain;charset=utf-8",
             },
             body: JSON.stringify(dataToSend),
         }

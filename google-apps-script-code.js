@@ -27,11 +27,11 @@ function doPost(e) {
     // Check if this is a test submission
     if (data.isTest === true) {
       // For test submissions, just return success without writing to the sheet
-      return output.setContent(JSON.stringify({
+      return ContentService.createTextOutput(JSON.stringify({
         result: "success",
         message: "Test connection successful - No data was written to the sheet",
         testMode: true
-      }));
+      })).setMimeType(ContentService.MimeType.JSON);
     }
     
     // Get the active sheet
@@ -85,17 +85,17 @@ function doPost(e) {
     formatSheet(sheet);
     
     // Return success response
-    return output.setContent(JSON.stringify({
+    return ContentService.createTextOutput(JSON.stringify({
       result: "success",
       message: "Data successfully recorded"
-    }));
+    })).setMimeType(ContentService.MimeType.JSON);
     
   } catch (error) {
     // Return error response
-    return output.setContent(JSON.stringify({
+    return ContentService.createTextOutput(JSON.stringify({
       result: "error",
       message: error.toString()
-    }));
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -107,17 +107,17 @@ function createHeaders(sheet) {
     "Last Name",
     "Email",
     "Phone Number",
-    "Lives in Maryland",
-    "Works in Maryland",
+    "Lives in County",
+    "Works in County",
     "County Employee",
     "Municipality",
     "Household Size",
     "Household Income",
-    "First Time Buyer",
+    "First-Time Buyer",
     "Currently Owns Property",
     "Credit Score",
     "Student Debt",
-    "How Long Stay",
+    "Planned Stay Duration",
     "Selected Programs",
     "Qualified Programs",
     "Additional Responses"

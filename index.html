@@ -3,25 +3,44 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mortgage Match Pro</title>
+    <title>Mortgage Match Pro | Find Your Perfect Home Loan Program</title>
+    <meta name="description" content="Find the perfect mortgage and homebuyer assistance programs across Maryland with Mortgage Match Pro.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1>Mortgage Match Pro</h1>
-            <a href="admin.html" style="font-size: 0.8rem; color: #718096;">Admin Panel</a>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Mortgage Match Pro Logo" class="logo" onerror="this.style.display='none'">
+                <h1>Mortgage Match Pro</h1>
+            </div>
+            <p class="tagline">Finding the right homebuyer program for you in Maryland</p>
         </div>
+    </header>
 
-        <div class="progress-bar">
-            <div class="progress" id="progress-bar" style="width: 25%"></div>
+    <div class="container main-container">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar" style="width: 25%"></div>
+            </div>
+            <div class="progress-steps">
+                <span class="progress-step active">Basic Info</span>
+                <span class="progress-step">Available Programs</span>
+                <span class="progress-step">Program Details</span>
+                <span class="progress-step">Results</span>
+            </div>
         </div>
 
         <!-- Step 1: Basic Questions -->
         <div class="step active" id="step1">
             <h2>Step 1: Tell Us About Yourself</h2>
-            <p>
+            <p class="lead">
                 Let's start with some basic information to help find homebuyer
                 programs across Maryland that you may qualify for.
             </p>
@@ -244,7 +263,7 @@
             </div>
 
             <div class="button-container">
-                <button type="button" id="next-to-step2">
+                <button type="button" id="next-to-step2" class="primary-button">
                     Find My Programs
                 </button>
             </div>
@@ -253,7 +272,7 @@
         <!-- Step 2: Programs List -->
         <div class="step" id="step2">
             <h2>Step 2: Programs You May Qualify For</h2>
-            <p>
+            <p class="lead">
                 Based on your answers, here are the homebuyer programs you may
                 qualify for in Maryland. Select all programs you're
                 interested in learning more about:
@@ -290,7 +309,7 @@
                     Back to Programs
                 </button>
                 <button type="button" id="check-qualification">
-                    Check If I Qualify
+                    Submit & Get My Results
                 </button>
             </div>
         </div>
@@ -298,7 +317,7 @@
         <!-- Step 4: Summary Page -->
         <div class="step" id="step4">
             <h2>Your Qualification Summary</h2>
-            <p>
+            <p class="lead">
                 Based on the information you provided, here is your qualification
                 summary:
             </p>
@@ -330,16 +349,40 @@
                 <button type="button" id="print-summary" class="print-btn">
                     Print Summary
                 </button>
-                <!-- Submit Button -->
+                <!-- Submit Button (hidden, as submission happens automatically) -->
                 <button
                     type="button"
                     id="submit-data"
-                    style="background-color: #38a169">
+                    class="submit-btn"
+                    style="display: none;">
                     Submit Information
                 </button>
             </div>
         </div>
     </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Mortgage Match Pro</h3>
+                    <p>Finding the right homebuyer program for you in Maryland</p>
+                </div>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-disclaimer">
+                <p>© 2025 Mortgage Match Pro. All rights reserved.</p>
+                <p class="small">This tool provides a preliminary assessment only. Final qualification determination will be made by program administrators.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Load JavaScript modules -->
     <script type="module" src="js/programs.js"></script>
