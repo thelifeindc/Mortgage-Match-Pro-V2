@@ -45,7 +45,23 @@
         "question": "Which type of financing are you planning to use?",
         "options": ["Conventional", "FHA", "Other/Not sure"]
       }
-    ]
+    ],
+    "status": "active",
+    "source": "manual-entry",
+    "createdAt": "2025-05-08T12:00:00Z",
+    "updatedAt": "2025-05-08T12:00:00Z",
+    "lastValidatedAt": "2025-05-08T12:00:00Z",
+    "expiresAt": null,
+    "metadata": {
+      "version": 1,
+      "changeHistory": [
+        {
+          "date": "2025-05-08T12:00:00Z",
+          "type": "created",
+          "details": "Initial program entry"
+        }
+      ]
+    }
   },
   {
     "id": "hoc-mpp",
@@ -93,7 +109,23 @@
         "question": "Which type of financing are you planning to use?",
         "options": ["Conventional", "FHA", "Other/Not sure"]
       }
-    ]
+    ],
+    "status": "active",
+    "source": "manual-entry",
+    "createdAt": "2025-05-08T12:00:00Z",
+    "updatedAt": "2025-05-08T12:00:00Z",
+    "lastValidatedAt": "2025-05-08T12:00:00Z",
+    "expiresAt": null,
+    "metadata": {
+      "version": 1,
+      "changeHistory": [
+        {
+          "date": "2025-05-08T12:00:00Z",
+          "type": "created",
+          "details": "Initial program entry"
+        }
+      ]
+    }
   },
   {
     "id": "pg-path",
@@ -142,7 +174,23 @@
         "question": "Is your debt-to-income ratio below 45%?",
         "options": ["Yes", "No", "Not sure"]
       }
-    ]
+    ],
+    "status": "active",
+    "source": "manual-entry",
+    "createdAt": "2025-05-08T12:00:00Z",
+    "updatedAt": "2025-05-08T12:00:00Z",
+    "lastValidatedAt": "2025-05-08T12:00:00Z",
+    "expiresAt": null,
+    "metadata": {
+      "version": 1,
+      "changeHistory": [
+        {
+          "date": "2025-05-08T12:00:00Z",
+          "type": "created",
+          "details": "Initial program entry"
+        }
+      ]
+    }
   },
   {
     "id": "hoc-dpa",
@@ -196,7 +244,23 @@
           "More than $30,000"
         ]
       }
-    ]
+    ],
+    "status": "active",
+    "source": "manual-entry",
+    "createdAt": "2025-05-08T12:00:00Z",
+    "updatedAt": "2025-05-08T12:00:00Z",
+    "lastValidatedAt": "2025-05-08T12:00:00Z",
+    "expiresAt": null,
+    "metadata": {
+      "version": 1,
+      "changeHistory": [
+        {
+          "date": "2025-05-08T12:00:00Z",
+          "type": "created",
+          "details": "Initial program entry"
+        }
+      ]
+    }
   },
   {
     "id": "smartbuy",
@@ -248,7 +312,23 @@
         "question": "Are you familiar with the Maryland Mortgage Program requirements?",
         "options": ["Yes", "No", "Somewhat"]
       }
-    ]
+    ],
+    "status": "active",
+    "source": "manual-entry",
+    "createdAt": "2025-05-08T12:00:00Z",
+    "updatedAt": "2025-05-08T12:00:00Z",
+    "lastValidatedAt": "2025-05-08T12:00:00Z",
+    "expiresAt": null,
+    "metadata": {
+      "version": 1,
+      "changeHistory": [
+        {
+          "date": "2025-05-08T12:00:00Z",
+          "type": "created",
+          "details": "Initial program entry"
+        }
+      ]
+    }
   },
   {
     "id": "flex-loans",
@@ -298,6 +378,22 @@
         "question": "Have you spoken with a Maryland Mortgage Program approved lender?",
         "options": ["Yes", "No", "Not yet"]
       }
-    ]
+    ],
+    "status": "active",
+    "source": "manual-entry",
+    "createdAt": "2025-05-08T12:00:00Z",
+    "updatedAt": "2025-05-08T12:00:00Z",
+    "lastValidatedAt": "2025-05-08T12:00:00Z",
+    "expiresAt": null,
+    "metadata": {
+      "version": 1,
+      "changeHistory": [
+        {
+          "date": "2025-05-08T12:00:00Z",
+          "type": "created",
+          "details": "Initial program entry"
+        }
+      ]
+    }
   }
 ]

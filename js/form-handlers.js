@@ -1,4 +1,3 @@
-import { programs } from './programs.js';
 import { filterQualifyingPrograms, checkProgramQualification, fetchProgramData } from './api.js';
 import { animateSubmitProgress } from './animations.js';
 
@@ -109,9 +108,6 @@ function moveToStep2() {
             return;
         }
 
-        // Filter qualifying programs
-        qualifyingPrograms = filterQualifyingPrograms(userData);
-
         // Show a subtle loading animation before populating programs
         const findingProgramsIndicator = document.createElement("div");
         findingProgramsIndicator.className = "loading-container";
@@ -124,7 +120,24 @@ function moveToStep2() {
         
         // Add animation to the submit button
         const nextButton = document.getElementById("next-to-step2");
-        animateSubmitProgress(nextButton, () => {
+        animateSubmitProgress(nextButton, async () => {
+            // Filter qualifying programs - properly await the async result
+            try {
+                // Log the user data being sent
+                console.log("Submitting user data for program matching:", JSON.stringify(userData, null, 2));
+                
+                qualifyingPrograms = await filterQualifyingPrograms(userData);
+                console.log("Found qualifying programs:", qualifyingPrograms.length, qualifyingPrograms);
+                
+                // If no programs are found, show debugging info in the console
+                if (qualifyingPrograms.length === 0) {
+                    console.warn("No qualifying programs found. Enable DEBUG in api.js to see why.");
+                }
+            } catch (error) {
+                console.error("Error finding qualifying programs:", error);
+                qualifyingPrograms = []; // Fallback to empty array on error
+            }
+            
             // Animate step transition
             step1.style.animation = "fadeOutUp 0.5s ease forwards";
             
