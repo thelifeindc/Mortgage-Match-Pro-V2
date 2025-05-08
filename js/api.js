@@ -1,65 +1,66 @@
 import { programs } from './programs.js';
+import LenderService from './lender-service.js';
+
+// Cache configuration
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const programCache = new Map();
 
 /**
- * Filters programs based on user data to determine which ones the user may qualify for
- * @param {Object} userData - User's input data
- * @returns {Array} - Array of qualifying programs
+ * Fetches program data from all available sources with caching
+ * @param {Object} criteria - Search criteria for programs
+ * @returns {Promise} - Promise that resolves to program data
  */
-function filterQualifyingPrograms(userData) {
-    return programs.filter((program) => {
-        // Check credit score requirement
-        let creditScoreQualifies = true;
-        if (program.eligibility.creditScore > 0) {
-            if (userData.creditScore === "below-640") {
-                creditScoreQualifies = program.eligibility.creditScore < 640;
-            } else if (userData.creditScore === "640-699") {
-                creditScoreQualifies = program.eligibility.creditScore <= 640;
-            } else if (userData.creditScore === "700-plus") {
-                creditScoreQualifies = true; // If user has 700+, they qualify for any credit score requirement
-            }
+async function fetchProgramData(criteria = {}) {
+    const cacheKey = JSON.stringify(criteria);
+    const cachedData = programCache.get(cacheKey);
+    
+    // Return cached data if it's still valid
+    if (cachedData && (Date.now() - cachedData.timestamp) < CACHE_DURATION) {
+        return cachedData.data;
+    }
+    
+    try {
+        // Get real-time data from lender APIs
+        const realTimePrograms = await LenderService.getAllPrograms(criteria);
+        
+        // Merge with local program data
+        const localPrograms = programs.filter(program => {
+            return !realTimePrograms.some(rtp => rtp.id === program.id);
+        });
+
+        const mergedPrograms = [...realTimePrograms, ...localPrograms];
+        
+        // Update cache
+        programCache.set(cacheKey, {
+            data: mergedPrograms,
+            timestamp: Date.now()
+        });
+
+        return mergedPrograms;
+    } catch (error) {
+        console.error('Error fetching program data:', error);
+        
+        // Check cache for stale data before falling back to local data
+        if (cachedData) {
+            console.log('Using stale cached data');
+            return cachedData.data;
         }
+        
+        // Ultimate fallback to local data
+        return programs;
+    }
+}
 
-        // Check first-time buyer requirement
-        const firstTimeBuyerQualifies = !program.eligibility.firstTimeBuyer || userData.firstTimeBuyer;
-
-        // Check county employee requirement
-        const countyEmployeeQualifies = !program.eligibility.countyEmployee || userData.countyEmployee;
-
-        // Check currently owning property
-        const propertyOwnershipQualifies = !program.eligibility.currentlyOwnProperty || !userData.currentlyOwnProperty;
-
-        // Check student debt requirement
-        const studentDebtQualifies = !program.eligibility.studentDebt || userData.studentDebt;
-
-        // Check living/working in county requirement (if either is required, at least one must be true)
-        const locationQualifies = !(program.eligibility.livingInCounty && program.eligibility.workingInCounty) || 
-                                  userData.liveInCounty || 
-                                  userData.workInCounty;
-
-        // Check income limits
-        const householdSize = Math.min(userData.householdSize, 5); // Cap at 5 for our data structure
-        const incomeLimit = program.eligibility.incomeLimits[householdSize];
-        const incomeQualifies = userData.householdIncome <= incomeLimit;
-
-        // Special case for municipality-specific programs (Gaithersburg, Rockville, etc.)
-        let municipalityQualifies = true;
-        if (program.eligibility.gaithersburg) {
-            municipalityQualifies = userData.municipality === "gaithersburg";
-        }
-        if (program.eligibility.rockville) {
-            municipalityQualifies = userData.municipality === "rockville";
-        }
-
-        return (
-            creditScoreQualifies &&
-            firstTimeBuyerQualifies &&
-            countyEmployeeQualifies &&
-            propertyOwnershipQualifies &&
-            studentDebtQualifies &&
-            locationQualifies &&
-            incomeQualifies &&
-            municipalityQualifies
-        );
+/**
+ * Filters programs based on user data to determine which ones they may qualify for
+ * @param {Object} userData - User's input data
+ * @returns {Promise<Array>} - Array of qualifying programs
+ */
+async function filterQualifyingPrograms(userData) {
+    const allPrograms = await fetchProgramData(userData);
+    
+    return allPrograms.filter((program) => {
+        return checkProgramQualification(program, userData);
     });
 }
 
@@ -138,21 +139,6 @@ function checkProgramQualification(program, userData) {
     }
 
     return true;
-}
-
-/**
- * Fetches program data from an external API
- * Future enhancement to load programs dynamically from server
- * @returns {Promise} - Promise that resolves to program data
- */
-function fetchProgramData() {
-    return new Promise((resolve) => {
-        // For now, just return the static program data
-        // In the future, this could make an actual API request
-        setTimeout(() => {
-            resolve(programs);
-        }, 300);
-    });
 }
 
 /**
